@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Bungee';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/bungee.woff2) format('woff2');
+}
+
+body {
+  font-family: Bungee, sans-serif;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.honderdveld {
+}
