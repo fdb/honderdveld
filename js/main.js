@@ -2,9 +2,25 @@ const gCanvas = document.querySelector("#c");
 const gCtx = gCanvas.getContext("2d");
 gCtx.translate(9.5, 9.5);
 
-let gCurrentRow = 2;
-let gCurrentCol = 5;
-let gCurrentInput = "1";
+let gCurrentRow = 1;
+let gCurrentCol = 1;
+let gCurrentInput = "";
+let gCorrectAnswers = [];
+let gAssignments = [];
+
+for (let col = 1; col <= 10; col++) {
+  for (let row = 1; row <= 10; row++) {
+    gAssignments.push([col, row]);
+  }
+}
+shuffle(gAssignments);
+
+const INPUT_STATE_INCOMPLETE = "incomplete";
+const INPUT_STATE_RIGHT_ANSWER = "right_answer";
+const INPUT_STATE_WRONG_ANSWER = "wrong_answer";
+const INPUT_STATE_GAME_OVER = "game_over";
+
+let gInputState = INPUT_STATE_GAME_OVER;
 
 const COLORS = {
   // PURPLE
@@ -29,9 +45,23 @@ const COLORS = {
   pink900: "#702459"
 };
 
+function choice(l) {
+  return l[Math.floor(Math.random() * l.length)];
+}
+
+// https://stackoverflow.com/a/6274381/231298
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function drawBackground() {
-  gCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
-  gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
+  gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+  // gCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
+  // gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
 }
 
 function drawGrid() {
@@ -55,7 +85,7 @@ function drawGrid() {
 
   gCtx.textAlign = "right";
   for (let row = 0; row < 10; row++) {
-    const y = 50 + row * 50 + 37;
+    const y = 50 + row * 50 + 40;
     gCtx.fillText(`${row + 1}`, 65, y);
   }
 
@@ -67,6 +97,7 @@ function drawGrid() {
 }
 
 function drawCurrentFocus() {
+  if (gInputState === INPUT_STATE_GAME_OVER) return;
   gCtx.fillStyle = COLORS.purple600;
   // Highlight current row
   gCtx.fillRect(0, gCurrentRow * 50, (gCurrentCol + 1) * 75, 50);
@@ -74,24 +105,118 @@ function drawCurrentFocus() {
   gCtx.fillRect(gCurrentCol * 75, 0, 75, (gCurrentRow + 1) * 50);
 
   // Highlight current square
-  gCtx.fillStyle = COLORS.purple400;
+  if (gInputState === INPUT_STATE_INCOMPLETE) {
+    gCtx.fillStyle = COLORS.purple400;
+  } else if (gInputState === INPUT_STATE_RIGHT_ANSWER) {
+    gCtx.fillStyle = COLORS.purple800;
+  } else if (gInputState === INPUT_STATE_WRONG_ANSWER) {
+    gCtx.fillStyle = "red";
+  } else {
+    throw new Error("Invalid input state", gInputState);
+  }
   gCtx.fillRect(gCurrentCol * 75, gCurrentRow * 50, 75, 50);
 }
 
-function drawCurrentInput() {
-  let text = gCurrentInput;
-  while (text.length < 2) {
-    text += "_";
-  }
+function drawTextInCell(text, col, row) {
   gCtx.textAlign = "center";
-  const x = gCurrentCol * 75 + 40;
-  const y = gCurrentRow * 50 + 40;
+  const x = col * 75 + 40;
+  const y = row * 50 + 40;
   gCtx.fillText(text, x, y);
 }
 
-window.requestAnimationFrame(() => {
-  // drawBackground();
+function drawCurrentInput() {
+  gCtx.fillStyle = "white";
+  let text = gCurrentInput;
+  const correctAnswerLength = `${gCurrentCol * gCurrentRow}`.length;
+
+  while (text.length < correctAnswerLength) {
+    text += "_";
+  }
+  drawTextInCell(text, gCurrentCol, gCurrentRow);
+}
+
+function drawCorrectAnswers() {
+  gCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+  for ([row, col] of gCorrectAnswers) {
+    drawTextInCell(row * col, row, col);
+  }
+}
+
+function validateAnswer() {
+  const result = gCurrentCol * gCurrentRow;
+  const answer = parseInt(gCurrentInput);
+  if (result !== answer) {
+    gInputState = INPUT_STATE_WRONG_ANSWER;
+    setTimeout(clearInput, 600);
+  } else {
+    gInputState = INPUT_STATE_RIGHT_ANSWER;
+    gCorrectAnswers.push([gCurrentCol, gCurrentRow]);
+    setTimeout(nextAssignment, 600);
+  }
+  draw();
+}
+
+function clearInput() {
+  gCurrentInput = "";
+  gInputState = INPUT_STATE_INCOMPLETE;
+  draw();
+}
+
+function nextAssignment() {
+  gInputState = INPUT_STATE_INCOMPLETE;
+  const assignment = gAssignments.pop();
+  if (assignment) {
+    gCurrentCol = assignment[0];
+    gCurrentRow = assignment[1];
+    gCurrentInput = "";
+    draw();
+  } else {
+    gameOver();
+  }
+}
+
+function gameOver() {
+  gInputState = INPUT_STATE_GAME_OVER;
+  setInterval(draw, 500);
+}
+
+function onKeyDown(e) {
+  // console.log(e);
+  if (gInputState !== INPUT_STATE_INCOMPLETE) return;
+  const correctAnswerLength = `${gCurrentCol * gCurrentRow}`.length;
+  if (e.keyCode >= 48 && e.keyCode <= 57) {
+    gCurrentInput += e.key;
+  } else if (e.key === "Backspace") {
+    gCurrentInput = gCurrentInput.substring(0, gCurrentInput.length - 1);
+  }
+  if (gCurrentInput.length === correctAnswerLength) {
+    validateAnswer();
+  }
+  draw();
+}
+
+function drawGameOver() {
+  for (let col = 1; col < 11; col++) {
+    for (let row = 1; row < 11; row++) {
+      gCtx.fillStyle = `hsla(${Math.random() * 100}, 80%, 50%, 0.8)`;
+      gCtx.fillRect(col * 75, row * 50, 75, 50);
+    }
+  }
+}
+
+function draw() {
+  drawBackground();
   drawCurrentFocus();
   drawGrid();
-  drawCurrentInput();
-});
+  drawCorrectAnswers();
+  if (gInputState === INPUT_STATE_GAME_OVER) {
+    drawGameOver();
+  } else {
+    drawCurrentInput();
+  }
+}
+
+nextAssignment();
+draw();
+
+window.addEventListener("keydown", onKeyDown);
