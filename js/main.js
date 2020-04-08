@@ -147,11 +147,11 @@ function validateAnswer() {
   const answer = parseInt(gCurrentInput);
   if (result !== answer) {
     gInputState = INPUT_STATE_WRONG_ANSWER;
-    setTimeout(clearInput, 600);
+    setTimeout(clearInput, 400);
   } else {
     gInputState = INPUT_STATE_RIGHT_ANSWER;
     gCorrectAnswers.push([gCurrentCol, gCurrentRow]);
-    setTimeout(nextAssignment, 600);
+    setTimeout(nextAssignment, 150);
   }
   draw();
 }
