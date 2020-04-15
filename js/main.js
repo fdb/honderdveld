@@ -196,11 +196,9 @@ function onKeyDown(e) {
 }
 
 function drawGameOver() {
-  for (let col = 1; col < 11; col++) {
-    for (let row = 1; row < 11; row++) {
-      gCtx.fillStyle = `hsla(${Math.random() * 100}, 80%, 50%, 0.8)`;
-      gCtx.fillRect(col * 75, row * 50, 75, 50);
-    }
+  for ([col, row] of gCorrectAnswers) {
+    gCtx.fillStyle = `hsla(${Math.random() * 100}, 80%, 50%, 0.8)`;
+    gCtx.fillRect(col * 75, row * 50, 75, 50);
   }
 }
 
