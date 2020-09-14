@@ -42,7 +42,7 @@ const COLORS = {
   pink600: "#d53f8c",
   pink700: "#b83280",
   pink800: "#97266d",
-  pink900: "#702459"
+  pink900: "#702459",
 };
 
 function choice(l) {
@@ -218,3 +218,6 @@ nextAssignment();
 draw();
 
 window.addEventListener("keydown", onKeyDown);
+window.onbeforeunload = function () {
+  return "Ben je zeker dat je de site wil verlaten?";
+};

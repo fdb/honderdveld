@@ -218,3 +218,6 @@ nextAssignment();
 draw();
 
 window.addEventListener("keydown", onKeyDown);
+window.onbeforeunload = function () {
+  return "Ben je zeker dat je de site wil verlaten?";
+};
