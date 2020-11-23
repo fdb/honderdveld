@@ -184,7 +184,7 @@ function onKeyDown(e) {
   // console.log(e);
   if (gInputState !== INPUT_STATE_INCOMPLETE) return;
   const correctAnswerLength = `${gCurrentCol * gCurrentRow}`.length;
-  if (e.keyCode >= 48 && e.keyCode <= 57) {
+  if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
     gCurrentInput += e.key;
   } else if (e.key === "Backspace") {
     gCurrentInput = gCurrentInput.substring(0, gCurrentInput.length - 1);
