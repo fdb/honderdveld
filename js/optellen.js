@@ -175,19 +175,51 @@ function nextAssignment() {
   }
 }
 
+let confettiDuration = 3 * 1000;
+let confettiEnd;
+
 function gameOver() {
   gInputState = INPUT_STATE_GAME_OVER;
   setInterval(draw, 500);
+  confettiEnd = Date.now() + confettiDuration;
+  requestAnimationFrame(confettiFrame);
+}
+
+function confettiFrame() {
+  // launch a few confetti from the left edge
+  confetti({
+    particleCount: 7,
+    angle: 60,
+    spread: 55,
+    origin: { x: 0 },
+  });
+  // and launch a few from the right edge
+  confetti({
+    particleCount: 7,
+    angle: 120,
+    spread: 55,
+    origin: { x: 1 },
+  });
+
+  // keep going until we are out of time
+  if (Date.now() < confettiEnd) {
+    requestAnimationFrame(confettiFrame);
+  }
 }
 
 function onKeyDown(e) {
   // console.log(e);
   if (gInputState !== INPUT_STATE_INCOMPLETE) return;
   const correctAnswerLength = `${gCurrentCol + gCurrentRow}`.length;
-  if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
+  if (
+    (e.keyCode >= 48 && e.keyCode <= 57) ||
+    (e.keyCode >= 96 && e.keyCode <= 105)
+  ) {
     gCurrentInput += e.key;
   } else if (e.key === "Backspace") {
     gCurrentInput = gCurrentInput.substring(0, gCurrentInput.length - 1);
+  } else if (e.key === "G") {
+    gameOver();
   }
   if (gCurrentInput.length === correctAnswerLength) {
     validateAnswer();
