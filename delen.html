@@ -3,26 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Honderdveld</title>
+    <title>Honderdveld - Delen</title>
     <link rel="stylesheet" href="third_party/tailwind.min.css" />
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body class="bg-pink-800 text-white">
     <div class="wrapper flex flex-col items-center m-auto my-10">
       <h1 class="mb-5 transform-uppercase text-center text-6xl text-shadow">
-        Honderdveld
+        Honderdveld — Delen
       </h1>
-      <p style="font-size: 48px; text-decoration: underline">
-        <a href="/optellen.html">Optellen</a>
-      </p>
-      <br />
-      <p style="font-size: 48px; text-decoration: underline">
-        <a href="/vermenigvuldigen.html">Vermenigvuldigen</a>
-      </p>
-      <br />
-      <p style="font-size: 48px; text-decoration: underline">
-        <a href="/delen.html">Delen</a>
-      </p>
+      <canvas id="c" width="850" height="580"></canvas>
     </div>
+    <script src="third_party/three.min.js"></script>
+    <script src="third_party/gsap.min.js"></script>
+    <script src="third_party/confetti.browser.js"></script>
+    <script src="js/delen.js"></script>
   </body>
 </html>
