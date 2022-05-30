@@ -8,8 +8,17 @@ let gCurrentInput = "";
 let gCorrectAnswers = [];
 let gAssignments = [];
 
+const NUMBERS_RE = /^#([0-9,]+)$/;
+
+let gNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+if (document.location.hash.match(NUMBERS_RE)) {
+  const numbers = document.location.hash.match(NUMBERS_RE)[1].split(",");
+  gNumbers = numbers.map((n) => parseInt(n));
+}
+console.log(gNumbers);
+
 for (let col = 1; col <= 10; col++) {
-  for (let row = 1; row <= 10; row++) {
+  for (let row of gNumbers) {
     gAssignments.push([col, row]);
   }
 }
@@ -85,6 +94,7 @@ function drawGrid() {
 
   gCtx.textAlign = "right";
   for (let row = 0; row < 10; row++) {
+    if (!gNumbers.includes(row + 1)) continue;
     const y = 50 + row * 50 + 40;
     gCtx.fillText(`${row + 1}`, 65, y);
   }
