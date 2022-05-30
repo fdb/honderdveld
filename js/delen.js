@@ -1,8 +1,17 @@
 let gCorrectAnswers = [];
 let gAssignments = [];
 
+const NUMBERS_RE = /^#([0-9,]+)$/;
+
+let gNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+if (document.location.hash.match(NUMBERS_RE)) {
+  const numbers = document.location.hash.match(NUMBERS_RE)[1].split(",");
+  gNumbers = numbers.map((n) => parseInt(n));
+}
+console.log(gNumbers);
+
 for (let col = 1; col <= 10; col++) {
-  for (let row = 1; row <= 10; row++) {
+  for (let row of gNumbers) {
     const divisor = row;
     const dividend = col * row;
     gAssignments.push([dividend, divisor]);
