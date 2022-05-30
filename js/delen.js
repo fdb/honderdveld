@@ -207,7 +207,8 @@ const animate = () => {
 function onKeyDown(e) {
   if (gInputState !== INPUT_STATE_INCOMPLETE) return;
   const correctAnswerLength = `${gDividend / gDivisor}`.length;
-  if (e.keyCode >= 48 && e.keyCode <= 57) {
+  console.log(e);
+  if (e.key >= "0" && e.key <= "9") {
     gCurrentInput += e.key;
   } else if (e.key === "`") {
     gCurrentInput = `${gDividend / gDivisor}`;
